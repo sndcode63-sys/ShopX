@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // ── Colors ──────────────────────────────────────────────
+  //  Colors
   static const Color primary = Color(0xFF6C63FF);
   static const Color primaryDark = Color(0xFF4B44CC);
   static const Color accent = Color(0xFFFF6584);
@@ -21,7 +21,7 @@ class AppTheme {
   static const Color shimmerBase = Color(0xFF1E1E35);
   static const Color shimmerHighlight = Color(0xFF2A2A50);
 
-  // ── Gradients ───────────────────────────────────────────
+  // Gradients
   static const LinearGradient primaryGradient = LinearGradient(
     colors: [Color(0xFF6C63FF), Color(0xFF9B59B6)],
     begin: Alignment.topLeft,
