@@ -37,9 +37,7 @@ class AppRoutes {
       transitionDuration: AppConstants.animMedium,
     ),
 
-    // ✅ FIX: preventDuplicates: false rakho
-    // Jab same product pe dobara tap karo toh route block na ho
-    // maintainState: true — screen pop hone ke baad state preserve rahegi
+
     GetPage(
       name: AppConstants.productDetailRoute,
       page: () => const ProductDetailScreen(),

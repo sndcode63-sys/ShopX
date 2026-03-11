@@ -136,12 +136,10 @@ class _ProductInfo extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // 👈 Price updates based on quantity
             Obx(() {
               final inCart = cart.isInCart(product.id);
               final qty = cart.quantityOf(product.id);
 
-              // Agar cart mein hai toh Price * Qty dikhayega
               final displayPrice = inCart
                   ? '₹${(product.price * qty * 83).toStringAsFixed(0)}'
                   : product.formattedPrice;

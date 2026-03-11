@@ -40,7 +40,7 @@ class AppTheme {
     end: Alignment.bottomRight,
   );
 
-  // ── Text Styles ─────────────────────────────────────────
+  //  Text Styles
   static TextStyle get displayLarge => GoogleFonts.spaceGrotesk(
     fontSize: 32,
     fontWeight: FontWeight.w700,
@@ -94,7 +94,7 @@ class AppTheme {
     color: success,
   );
 
-  // ── Theme Data ──────────────────────────────────────────
+  // Theme Data
   static ThemeData get dark => ThemeData(
     brightness: Brightness.dark,
     scaffoldBackgroundColor: bgDark,
