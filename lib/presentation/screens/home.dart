@@ -204,8 +204,6 @@ class _CategoryFilter extends StatelessWidget {
               child: AnimatedContainer(
                 duration: AppConstants.animFast,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                // ✅ FIX: gradient aur color ek saath nahi chalte BoxDecoration mein
-                // Isliye selected/unselected ke liye alag BoxDecoration banaya
                 decoration: isSelected
                     ? BoxDecoration(
                   gradient: AppTheme.primaryGradient,
