@@ -1,11 +1,8 @@
-// 360° Product View
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../../../../data/models/product_model.dart';
-import '../../../theme/app_theme.dart';
+import '../../../../presentation/controllers/theme_controller.dart';
 import 'app_network_image.dart';
 
 class Product360View extends StatefulWidget {
@@ -21,9 +18,7 @@ class _Product360ViewState extends State<Product360View>
   late final AnimationController _controller;
 
   double _currentAngle = 0.0;
-
   bool _isPlaying = true;
-
   bool _isDragging = false;
 
   static const double _fullCircle = 2 * 3.14159265358979;
@@ -76,121 +71,142 @@ class _Product360ViewState extends State<Product360View>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _toggleAutoRotate,
-      onHorizontalDragStart: _onDragStart,
-      onHorizontalDragUpdate: _onDragUpdate,
-      onHorizontalDragEnd: _onDragEnd,
-      child: Container(
-        width: double.infinity,
-        height: 340,
-        color: AppTheme.bgCard,
-        child: Stack(
-          children: [
-            Center(
-              child: Transform(
-                alignment: Alignment.center,
-                transform: Matrix4.identity()
-                  ..setEntry(3, 2, 0.001)
-                  ..rotateY(_currentAngle),
-                child:  AppNetworkImage(
-                  url: widget.product.image,
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.contain,
-                  radius: 0,
+    return Obx(() {
+      final t = ThemeController.to.theme;
+      return GestureDetector(
+        onTap: _toggleAutoRotate,
+        onHorizontalDragStart: _onDragStart,
+        onHorizontalDragUpdate: _onDragUpdate,
+        onHorizontalDragEnd: _onDragEnd,
+        child: Container(
+          width: double.infinity,
+          height: 340,
+          // Light mode: clean white bg; dark mode: bgCard
+          color: t.isDark ? t.bgCard : Colors.white,
+          child: Stack(
+            children: [
+              //  3-D rotating image
+              Center(
+                child: Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.identity()
+                    ..setEntry(3, 2, 0.001)
+                    ..rotateY(_currentAngle),
+                  child: AppNetworkImage(
+                    url: widget.product.image,
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.contain,
+                    radius: 0,
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              bottom: 20,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Transform.scale(
-                  scaleX: (0.4 +
-                      0.6 *
-                          (1 -
-                              (_currentAngle % 3.14159265 / 3.14159265 -
-                                  0.5)
-                                  .abs() *
-                                  2)
-                              .abs())
-                      .clamp(0.2, 1.0),
+
+              //  Ground shadow ellipse
+              Positioned(
+                bottom: 20,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Transform.scale(
+                    scaleX: (0.4 +
+                        0.6 *
+                            (1 -
+                                (_currentAngle % 3.14159265 /
+                                    3.14159265 -
+                                    0.5)
+                                    .abs() *
+                                    2)
+                                .abs())
+                        .clamp(0.2, 1.0),
+                    child: Container(
+                      width: 120,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black
+                                .withOpacity(t.isDark ? 0.25 : 0.12),
+                            blurRadius: 16,
+                            spreadRadius: 4,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              // "Drag to rotate" hint
+              Positioned(
+                bottom: 14,
+                left: 16,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.swipe_rounded, color: t.textMuted, size: 14),
+                    const SizedBox(width: 4),
+                    Text(
+                      _isDragging ? 'Rotating...' : 'Drag to rotate',
+                      style: GoogleFonts.dmSans(
+                          fontSize: 11, color: t.textMuted),
+                    ),
+                  ],
+                ),
+              ),
+
+              //  Auto-rotate toggle pill
+              Positioned(
+                bottom: 14,
+                right: 16,
+                child: GestureDetector(
+                  onTap: _toggleAutoRotate,
                   child: Container(
-                    width: 120,
-                    height: 10,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      boxShadow: [
+                      color: t.bgSurface.withOpacity(0.88),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: t.divider),
+                      boxShadow: t.isDark
+                          ? []
+                          : [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.25),
-                          blurRadius: 16,
-                          spreadRadius: 4,
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          _isPlaying
+                              ? Icons.rotate_right_rounded
+                              : Icons.play_arrow_rounded,
+                          color: t.primary,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          _isPlaying ? 'Auto' : 'Play',
+                          style: GoogleFonts.dmSans(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: t.primary,
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
               ),
-            ),
-            Positioned(
-              bottom: 14,
-              left: 16,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.swipe_rounded,
-                      color: AppTheme.textMuted, size: 14),
-                  const SizedBox(width: 4),
-                  Text(
-                    _isDragging ? 'Rotating...' : 'Drag to rotate',
-                    style: GoogleFonts.dmSans(
-                        fontSize: 11, color: AppTheme.textMuted),
-                  ),
-                ],
-              ),
-            ),
-            Positioned(
-              bottom: 14,
-              right: 16,
-              child: GestureDetector(
-                onTap: _toggleAutoRotate,
-                child: Container(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: AppTheme.bgSurface.withOpacity(0.85),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppTheme.divider),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        _isPlaying
-                            ? Icons.rotate_right_rounded
-                            : Icons.play_arrow_rounded,
-                        color: AppTheme.primary,
-                        size: 14,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        _isPlaying ? 'Auto' : 'Play',
-                        style: GoogleFonts.dmSans(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
-
-import '../../../theme/app_theme.dart';
+import '../../../../presentation/controllers/theme_controller.dart';
 
 class AppNetworkImage extends StatelessWidget {
   final String url;
@@ -22,30 +22,36 @@ class AppNetworkImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(radius),
-      child: CachedNetworkImage(
-        imageUrl: url,
-        width: width,
-        height: height,
-        fit: fit,
-        placeholder: (_, __) => Shimmer.fromColors(
-          baseColor: AppTheme.shimmerBase,
-          highlightColor: AppTheme.shimmerHighlight,
-          child: Container(
-            width: width,
-            height: height,
-            color: AppTheme.shimmerBase,
-          ),
-        ),
-        errorWidget: (_, __, ___) => Container(
+    return Obx(() {
+      final t = ThemeController.to.theme;
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: CachedNetworkImage(
+          imageUrl: url,
           width: width,
           height: height,
-          color: AppTheme.bgSurface,
-          child: const Icon(Icons.image_not_supported_rounded,
-              color: AppTheme.textMuted, size: 28),
+          fit: fit,
+          placeholder: (_, __) => Shimmer.fromColors(
+            baseColor: t.shimmerBase,
+            highlightColor: t.shimmerHighlight,
+            child: Container(
+              width: width,
+              height: height,
+              color: t.shimmerBase,
+            ),
+          ),
+          errorWidget: (_, __, ___) => Container(
+            width: width,
+            height: height,
+            color: t.bgSurface,
+            child: Icon(
+              Icons.image_not_supported_rounded,
+              color: t.textMuted,
+              size: 28,
+            ),
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

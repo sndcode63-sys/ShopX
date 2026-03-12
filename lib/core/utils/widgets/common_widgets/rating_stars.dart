@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-import '../../../theme/app_theme.dart';
+import 'package:get/get.dart';
+import '../../../../presentation/controllers/theme_controller.dart';
 
 class RatingStars extends StatelessWidget {
   final double rating;
@@ -16,23 +16,24 @@ class RatingStars extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        ...List.generate(5, (i) {
-          if (i < rating.floor()) {
-            return Icon(Icons.star_rounded, color: AppTheme.warning, size: size);
-          } else if (i < rating) {
-            return Icon(Icons.star_half_rounded, color: AppTheme.warning, size: size);
-          }
-          return Icon(Icons.star_outline_rounded, color: AppTheme.textMuted, size: size);
-        }),
-        const SizedBox(width: 4),
-        Text(
-          '($reviewCount)',
-          style: AppTheme.labelSmall,
-        ),
-      ],
-    );
+    return Obx(() {
+      final t = ThemeController.to.theme;
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ...List.generate(5, (i) {
+            if (i < rating.floor()) {
+              return Icon(Icons.star_rounded, color: t.warning, size: size);
+            } else if (i < rating) {
+              return Icon(Icons.star_half_rounded, color: t.warning, size: size);
+            }
+            return Icon(Icons.star_outline_rounded,
+                color: t.textMuted, size: size);
+          }),
+          const SizedBox(width: 4),
+          Text('($reviewCount)', style: t.labelSmall),
+        ],
+      );
+    });
   }
 }
